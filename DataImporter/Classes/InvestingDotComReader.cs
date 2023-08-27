@@ -4,14 +4,11 @@ using DataImporter.Models;
 
 namespace DataImporter.Classes;
 
-public class InvestingDotComReader : IDataReader
+public class InvestingDotComReader : BaseClass
 {
-    private readonly List<Ohlc> _data = new();
     private readonly string[] _knownDateTimeFormats = { "MMM d, yyyy", "d-MMM-yy", "M/d/yyyy" };
-    private bool _isInitialized;
-    private int _roundPoint = -1;
 
-    public void Read(string filePath)
+    public override void Read(string filePath)
     {
         using var reader = new StreamReader(filePath);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -30,33 +27,11 @@ public class InvestingDotComReader : IDataReader
                 GetDate(csv.GetField<string>((int)InvestingDotComColumn.Date)));
 
             UpdateDecimalCount(newElement.Close);
+            
+            _data.Add(newElement);
         }
 
-        _isInitialized = true;
-    }
-
-    public List<Ohlc> Data
-    {
-        get
-        {
-            CheckInitialized();
-            return _data;
-        }
-    }
-
-    public int RoundPoint
-    {
-        get
-        {
-            CheckInitialized();
-            return _roundPoint;
-        }
-    }
-
-    private void CheckInitialized()
-    {
-        if (!_isInitialized)
-            throw new Exception($"{nameof(Data)} is empty, initialized it by providing a file via {nameof(Read)}");
+        IsInitialized = true;
     }
 
     private DateTimeOffset GetDate(string? dateString)
