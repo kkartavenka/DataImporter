@@ -9,4 +9,5 @@ public interface IDataReader
     List<Ohlc> Data { get; }
     int RoundPoint { get; }
     IReaderConfiguration ReaderConfiguration { get; set; }
+    string? Symbol { get; }
 }

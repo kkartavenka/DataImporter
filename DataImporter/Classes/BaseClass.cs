@@ -8,7 +8,7 @@ public abstract class BaseClass : IDataReader
 {
     internal List<Ohlc> _data = new();
     internal int _roundPoint = -1;
-    internal bool IsInitialized;
+    internal bool _isInitialized;
 
     public abstract void Read(string filePath);
 
@@ -35,9 +35,11 @@ public abstract class BaseClass : IDataReader
         Delimiter = ","
     };
 
+    public string? Symbol { get; protected set; }
+
     private void CheckInitialized()
     {
-        if (!IsInitialized)
+        if (!_isInitialized)
             throw new Exception($"{nameof(Data)} is empty, initialized it by providing a file via {nameof(Read)}");
     }
 }

@@ -11,6 +11,7 @@ public class InvestingDotComReader : BaseClass
 
     public override void Read(string filePath)
     {
+        GetSymbol(filePath);
         using var reader = new StreamReader(filePath);
         using var csv = new CsvReader(reader, ReaderConfiguration);
 
@@ -32,7 +33,9 @@ public class InvestingDotComReader : BaseClass
             _data.Add(newElement);
         }
 
-        IsInitialized = true;
+        _data = _data.OrderBy(m => m.Date).ToList();
+
+        _isInitialized = true;
     }
 
     private DateTimeOffset GetDate(string? dateString)
@@ -46,6 +49,14 @@ public class InvestingDotComReader : BaseClass
                 return convertedDate;
 
         throw new FormatException($"Unexpected format {nameof(dateString)} = {dateString}");
+    }
+
+    private void GetSymbol(string fileName)
+    {
+        if (!File.Exists(fileName))
+            throw new FileNotFoundException(fileName);
+
+        Symbol = Path.GetFileNameWithoutExtension(fileName);
     }
 
     private void UpdateDecimalCount(double value)
