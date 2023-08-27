@@ -9,7 +9,7 @@ public class InvestingDotComReader : BaseClass
 {
     private readonly string[] _knownDateTimeFormats = { "MMM d, yyyy", "d-MMM-yy", "M/d/yyyy" };
 
-    public override void Read(string filePath)
+    public override void Import(string filePath)
     {
         GetSymbol(filePath);
         using var reader = new StreamReader(filePath);
@@ -25,11 +25,11 @@ public class InvestingDotComReader : BaseClass
                 csv.GetField<double>((int)InvestingDotComColumn.High),
                 csv.GetField<double>((int)InvestingDotComColumn.Low),
                 csv.GetField<double>((int)InvestingDotComColumn.Close),
-                csv.GetField<string>((int)InvestingDotComColumn.Volume).ToDouble(),
+                IgnoreVolume ? null : csv.GetField<string>((int)InvestingDotComColumn.Volume).ToDouble(),
                 GetDate(csv.GetField<string>((int)InvestingDotComColumn.Date)));
 
             UpdateDecimalCount(newElement.Close);
-            
+
             _data.Add(newElement);
         }
 
@@ -64,5 +64,9 @@ public class InvestingDotComReader : BaseClass
         var valueAsDecimal = (decimal)value;
         var count = BitConverter.GetBytes(decimal.GetBits(valueAsDecimal)[3])[2];
         if (count > _roundPoint) _roundPoint = count;
+    }
+
+    public InvestingDotComReader(bool ignoreVolume) : base(ignoreVolume)
+    {
     }
 }

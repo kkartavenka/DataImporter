@@ -7,8 +7,10 @@ public class DataImporter
 {
     public IDataReader GetReader(ImportSourceType sourceType) => sourceType switch
     {
-        ImportSourceType.InvestingDotCom => new InvestingDotComReader(),
-        ImportSourceType.MetaTrader => new MetaTraderExportReader(),
+        ImportSourceType.InvestingDotCom => new InvestingDotComReader(IgnoreVolume),
+        ImportSourceType.MetaTrader => new MetaTraderExportReader(IgnoreVolume),
         _ => throw new NotImplementedException()
     };
+    
+    public bool IgnoreVolume { get; set; }
 }

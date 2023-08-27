@@ -4,8 +4,12 @@ namespace DataImporter.Classes;
 
 public class MetaTraderExportReader: BaseClass
 {
-    public override void Read(string filePath)
+    public override void Import(string filePath)
     {
         throw new NotImplementedException();
+    }
+
+    public MetaTraderExportReader(bool ignoreVolume) : base(ignoreVolume)
+    {
     }
 }

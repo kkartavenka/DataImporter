@@ -10,7 +10,11 @@ public abstract class BaseClass : IDataReader
     internal int _roundPoint = -1;
     internal bool _isInitialized;
 
-    public abstract void Read(string filePath);
+    public BaseClass(bool ignoreVolume)
+    {
+        IgnoreVolume = ignoreVolume;
+    }
+    public abstract void Import(string filePath);
 
     public List<Ohlc> Data
     {
@@ -36,10 +40,11 @@ public abstract class BaseClass : IDataReader
     };
 
     public string? Symbol { get; protected set; }
+    public bool IgnoreVolume { get; }
 
     private void CheckInitialized()
     {
         if (!_isInitialized)
-            throw new Exception($"{nameof(Data)} is empty, initialized it by providing a file via {nameof(Read)}");
+            throw new Exception($"{nameof(Data)} is empty, initialized it by providing a file via {nameof(Import)}");
     }
 }
