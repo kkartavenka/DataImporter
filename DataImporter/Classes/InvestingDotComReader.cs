@@ -1,5 +1,6 @@
 using System.Globalization;
 using CsvHelper;
+using CsvHelper.Configuration;
 using DataImporter.Models;
 
 namespace DataImporter.Classes;
@@ -11,7 +12,7 @@ public class InvestingDotComReader : BaseClass
     public override void Read(string filePath)
     {
         using var reader = new StreamReader(filePath);
-        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+        using var csv = new CsvReader(reader, ReaderConfiguration);
 
         csv.Read();
         csv.ReadHeader();

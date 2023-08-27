@@ -1,3 +1,5 @@
+using System.Globalization;
+using CsvHelper.Configuration;
 using DataImporter.Models;
 
 namespace DataImporter.Classes;
@@ -28,7 +30,10 @@ public abstract class BaseClass : IDataReader
         }
     }
 
-    public char SeparationChar { get; set; } = ',';
+    public IReaderConfiguration ReaderConfiguration { get; set; } = new CsvConfiguration(CultureInfo.InvariantCulture)
+    {
+        Delimiter = ","
+    };
 
     private void CheckInitialized()
     {

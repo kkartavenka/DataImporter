@@ -6,6 +6,6 @@ public class MetaTraderExportReader: BaseClass
 {
     public override void Read(string filePath)
     {
-        
+        throw new NotImplementedException();
     }
 }
