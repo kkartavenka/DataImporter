@@ -1,6 +1,6 @@
 namespace DataImporter.Models;
 
-internal enum InvestingDotComColumn
+internal enum InvestingDotComCsvColumn
 {
     Date = 0, 
     Close = 1, 

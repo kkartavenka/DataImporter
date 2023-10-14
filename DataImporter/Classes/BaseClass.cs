@@ -14,7 +14,7 @@ public abstract class BaseClass : IDataReader
     {
         IgnoreVolume = ignoreVolume;
     }
-    public abstract void Import(string filePath);
+    public abstract void Import(object sourceInfo);
 
     public List<Ohlc> Data
     {

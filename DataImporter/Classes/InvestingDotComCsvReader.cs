@@ -5,15 +5,27 @@ using DataImporter.Models;
 
 namespace DataImporter.Classes;
 
-public class InvestingDotComReader : BaseClass
+public class InvestingDotComCsvReader : BaseClass
 {
+    private IReaderConfiguration _defaultConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
+    {
+        Delimiter = ","
+    };
     private readonly string[] _knownDateTimeFormats = { "MMM d, yyyy", "d-MMM-yy", "M/d/yyyy" };
 
-    public override void Import(string filePath)
+    public override void Import(object sourceInfo)
     {
-        GetSymbol(filePath);
-        using var reader = new StreamReader(filePath);
-        using var csv = new CsvReader(reader, ReaderConfiguration);
+        CsvSource source = sourceInfo switch
+        {
+            string filePath => new CsvSource(filePath),
+            CsvSource csvSource => csvSource,
+            _ => throw new ArgumentException(
+                $"Expected type {typeof(string)} or {typeof(CsvSource)} for {nameof(sourceInfo)}")
+        };
+
+        GetSymbol(source.FilePath);
+        using var reader = new StreamReader(source.FilePath);
+        using var csv = new CsvReader(reader, source.ReaderConfiguration ?? _defaultConfiguration);
 
         csv.Read();
         csv.ReadHeader();
@@ -21,12 +33,12 @@ public class InvestingDotComReader : BaseClass
         while (csv.Read())
         {
             var newElement = new Ohlc(
-                csv.GetField<double>((int)InvestingDotComColumn.Open),
-                csv.GetField<double>((int)InvestingDotComColumn.High),
-                csv.GetField<double>((int)InvestingDotComColumn.Low),
-                csv.GetField<double>((int)InvestingDotComColumn.Close),
-                IgnoreVolume ? null : csv.GetField<string>((int)InvestingDotComColumn.Volume).ToDouble(),
-                GetDate(csv.GetField<string>((int)InvestingDotComColumn.Date)));
+                csv.GetField<double>((int)InvestingDotComCsvColumn.Open),
+                csv.GetField<double>((int)InvestingDotComCsvColumn.High),
+                csv.GetField<double>((int)InvestingDotComCsvColumn.Low),
+                csv.GetField<double>((int)InvestingDotComCsvColumn.Close),
+                IgnoreVolume ? null : csv.GetField<string>((int)InvestingDotComCsvColumn.Volume).ToDouble(),
+                GetDate(csv.GetField<string>((int)InvestingDotComCsvColumn.Date)));
 
             UpdateDecimalCount(newElement.Close);
 
@@ -66,7 +78,7 @@ public class InvestingDotComReader : BaseClass
         if (count > _roundPoint) _roundPoint = count;
     }
 
-    public InvestingDotComReader(bool ignoreVolume) : base(ignoreVolume)
+    public InvestingDotComCsvReader(bool ignoreVolume) : base(ignoreVolume)
     {
     }
 }

@@ -4,7 +4,7 @@ namespace DataImporter.Classes;
 
 public class MetaTraderExportReader: BaseClass
 {
-    public override void Import(string filePath)
+    public override void Import(object sourceInfo)
     {
         throw new NotImplementedException();
     }

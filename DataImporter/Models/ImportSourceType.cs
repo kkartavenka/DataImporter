@@ -2,6 +2,7 @@ namespace DataImporter.Models;
 
 public enum ImportSourceType
 {
-    InvestingDotCom,
+    InvestingDotComHttps,
+    InvestingDotComCsv,
     MetaTrader
 }

@@ -5,7 +5,7 @@ namespace DataImporter;
 
 public interface IDataReader
 {
-    void Import(string filePath);
+    void Import(object sourceInfo);
     List<Ohlc> Data { get; }
     int RoundPoint { get; }
     IReaderConfiguration ReaderConfiguration { get; set; }
