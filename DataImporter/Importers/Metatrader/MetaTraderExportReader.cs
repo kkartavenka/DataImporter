@@ -1,10 +1,15 @@
-using DataImporter.Models;
+using DataImporter.Classes;
 
-namespace DataImporter.Classes;
+namespace DataImporter.Importers.Metatrader;
 
 public class MetaTraderExportReader: BaseClass
 {
     public override void Import(object sourceInfo)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Task ImportAsync(object sourceInfo)
     {
         throw new NotImplementedException();
     }

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace DataImporter.Classes;
@@ -10,7 +11,7 @@ internal static class StringConverter
     private const string KMultiplier = "k";
     private const string MMultiplier = "m";
 
-    internal static double ToDouble(this string? value)
+    internal static double ToDouble(this string? value, CultureInfo? cultureInfo = null)
     {
         if (value is null)
         {
@@ -34,10 +35,15 @@ internal static class StringConverter
             MMultiplier when nonNumericPart.Success => 1e6,
             _ => 1
         };
-
-        if (double.TryParse(numericPart.Value, out var dblPart))
+        
+        if (cultureInfo == null && double.TryParse(numericPart.Value, out var dblPart))
         {
             return dblPart * multiplier;
+        }
+        
+        if (cultureInfo != null && double.TryParse(numericPart.Value, cultureInfo, out var dblPartCultural))
+        {
+            return dblPartCultural * multiplier;
         }
 
         throw new FormatException($"Unable to parse volume format into double {nameof(value)} = {value}");
