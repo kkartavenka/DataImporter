@@ -14,7 +14,8 @@ public abstract class BaseClass : IDataReader
     {
         IgnoreVolume = ignoreVolume;
     }
-    public abstract void Import(string filePath);
+    public abstract void Import(object sourceInfo);
+    public abstract Task ImportAsync(object sourceInfo);
 
     public List<Ohlc> Data
     {
@@ -39,12 +40,14 @@ public abstract class BaseClass : IDataReader
         Delimiter = ","
     };
 
-    public string? Symbol { get; protected set; }
+    public string? Symbol { get; set; }
     public bool IgnoreVolume { get; }
 
     private void CheckInitialized()
     {
         if (!_isInitialized)
+        {
             throw new Exception($"{nameof(Data)} is empty, initialized it by providing a file via {nameof(Import)}");
+        }
     }
 }
