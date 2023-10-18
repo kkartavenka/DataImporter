@@ -15,7 +15,7 @@ public class InvestingDotComTests
         
         var reader = new DataImporter()
         {
-            IgnoreVolume = true
+            IgnoreVolume = VolumeBehavior.IgnoreReading
         };
         var dataReader = reader.GetReader(ImportSourceType.InvestingDotComHttps);
         dataReader.Import(requestInfo);

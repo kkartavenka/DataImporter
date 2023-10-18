@@ -17,7 +17,7 @@ public class Tests
     {
         var reader = new DataImporter()
         {
-            IgnoreVolume = true
+            IgnoreVolume = VolumeBehavior.IgnoreReading
         };
         var dataReader = reader.GetReader(ImportSourceType.InvestingDotComCsv);
         dataReader.Import(_sourceFile);
@@ -33,7 +33,7 @@ public class Tests
     {
         var reader = new DataImporter()
         {
-            IgnoreVolume = true
+            IgnoreVolume = VolumeBehavior.IgnoreReading
         };
         var dataReader = reader.GetReader(ImportSourceType.InvestingDotComCsv);
         dataReader.Import(new CsvSource(_sourceFile));
@@ -49,7 +49,7 @@ public class Tests
     {
         var reader = new DataImporter()
         {
-            IgnoreVolume = true
+            IgnoreVolume = VolumeBehavior.IgnoreReading
         };
         var dataReader = reader.GetReader(ImportSourceType.InvestingDotComCsv);
         

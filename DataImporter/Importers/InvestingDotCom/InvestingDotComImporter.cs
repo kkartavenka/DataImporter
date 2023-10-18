@@ -19,7 +19,7 @@ public class InvestingDotComImporter: InvestingDotDomBase
     private static HttpClient? _httpClient;
     private readonly object _lock = new();
 
-    public InvestingDotComImporter(bool ignoreVolume): base(ignoreVolume)
+    public InvestingDotComImporter(VolumeBehavior volumeBehavior): base(volumeBehavior)
     {
         SetupHttpClient();
     }
@@ -78,7 +78,7 @@ public class InvestingDotComImporter: InvestingDotDomBase
         var locale = GetLocale(document);
         Symbol = GetName(document);
         GetDataTable(document, locale);
-        _isInitialized = true;
+        IsInitialized = true;
     }
 
     private string? GetName(IDocument? document)
@@ -111,14 +111,23 @@ public class InvestingDotComImporter: InvestingDotDomBase
             {
                 continue;
             }
-            
+
+            var volume = VolumeBehavior switch
+            {
+                VolumeBehavior.IgnoreReading => null,
+                VolumeBehavior.IgnoreException => columns[(int)WebColumnMapping.Volume]
+                    .InnerHtml.ToDouble(cultureInfo, ignoreException: true),
+                VolumeBehavior.Strict => columns[(int)WebColumnMapping.Volume].InnerHtml.ToDouble(cultureInfo),
+                _ => throw new NotImplementedException(nameof(VolumeBehavior))
+            };
+
             var newElement = new Ohlc(
-                open: columns[(int)WebColumnMapping.Open].InnerHtml.ToDouble(cultureInfo),
-                high: columns[(int)WebColumnMapping.High].InnerHtml.ToDouble(cultureInfo),
-                low: columns[(int)WebColumnMapping.Low].InnerHtml.ToDouble(cultureInfo),
-                close: columns[(int)WebColumnMapping.Close].InnerHtml.ToDouble(cultureInfo),
+                open: columns[(int)WebColumnMapping.Open].InnerHtml.ToDouble(cultureInfo)!.Value,
+                high: columns[(int)WebColumnMapping.High].InnerHtml.ToDouble(cultureInfo)!.Value,
+                low: columns[(int)WebColumnMapping.Low].InnerHtml.ToDouble(cultureInfo)!.Value,
+                close: columns[(int)WebColumnMapping.Close].InnerHtml.ToDouble(cultureInfo)!.Value,
                 date: GetDate(columns[(int)WebColumnMapping.Date].QuerySelector("time")?.InnerHtml),
-                volume: IgnoreVolume? null:columns[(int)WebColumnMapping.Volume].InnerHtml.ToDouble(cultureInfo));
+                volume: volume);
             
             UpdateDecimalCount(newElement.Close);
 

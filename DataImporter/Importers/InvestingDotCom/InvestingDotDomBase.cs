@@ -1,5 +1,6 @@
 using System.Globalization;
 using DataImporter.Classes;
+using DataImporter.Models;
 
 namespace DataImporter.Importers.InvestingDotCom;
 
@@ -33,7 +34,7 @@ public class InvestingDotDomBase: BaseClass
         }
     }
 
-    protected InvestingDotDomBase(bool ignoreVolume) : base(ignoreVolume)
+    protected InvestingDotDomBase(VolumeBehavior ignoreVolume) : base(ignoreVolume)
     {
     }
 

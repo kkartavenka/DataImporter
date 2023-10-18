@@ -1,4 +1,5 @@
 using DataImporter.Classes;
+using DataImporter.Models;
 
 namespace DataImporter.Importers.Metatrader;
 
@@ -14,7 +15,7 @@ public class MetaTraderExportReader: BaseClass
         throw new NotImplementedException();
     }
 
-    public MetaTraderExportReader(bool ignoreVolume) : base(ignoreVolume)
+    public MetaTraderExportReader(VolumeBehavior ignoreVolume) : base(ignoreVolume)
     {
     }
 }

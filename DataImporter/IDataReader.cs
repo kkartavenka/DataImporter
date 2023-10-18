@@ -9,5 +9,5 @@ public interface IDataReader
     List<Ohlc> Data { get; }
     int RoundPoint { get; }
     string? Symbol { get; }
-    bool IgnoreVolume { get; }
+    VolumeBehavior VolumeBehavior { get; }
 }

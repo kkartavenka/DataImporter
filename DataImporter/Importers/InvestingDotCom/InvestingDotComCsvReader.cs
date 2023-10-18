@@ -15,7 +15,7 @@ public class InvestingDotComCsvReader : InvestingDotDomBase
         Delimiter = ","
     };
     
-    public InvestingDotComCsvReader(bool ignoreVolume) : base(ignoreVolume)
+    public InvestingDotComCsvReader(VolumeBehavior volumeBehavior) : base(volumeBehavior)
     {
     }
 
@@ -37,7 +37,7 @@ public class InvestingDotComCsvReader : InvestingDotDomBase
 
         _data = _data.OrderBy(m => m.Date).ToList();
 
-        _isInitialized = true;
+        IsInitialized = true;
     }
 
     public override async Task ImportAsync(object sourceInfo)
@@ -58,17 +58,25 @@ public class InvestingDotComCsvReader : InvestingDotDomBase
 
         _data = _data.OrderBy(m => m.Date).ToList();
 
-        _isInitialized = true;
+        IsInitialized = true;
     }
 
-    private void ProcessRow(CsvReader csv)
+    private void ProcessRow(IReaderRow csv)
     {
+        var volume = VolumeBehavior switch
+        {
+            VolumeBehavior.IgnoreReading => null,
+            VolumeBehavior.IgnoreException => csv.GetField<string>((int)CsvColumnMapping.Volume).ToDouble(csv.Configuration.CultureInfo, ignoreException: true),
+            VolumeBehavior.Strict => csv.GetField<string>((int)CsvColumnMapping.Volume).ToDouble(csv.Configuration.CultureInfo),
+            _ => throw new NotImplementedException(nameof(VolumeBehavior))
+        };
+        
         var newElement = new Ohlc(
             csv.GetField<double>((int)CsvColumnMapping.Open),
             csv.GetField<double>((int)CsvColumnMapping.High),
             csv.GetField<double>((int)CsvColumnMapping.Low),
             csv.GetField<double>((int)CsvColumnMapping.Close),
-            IgnoreVolume ? null : csv.GetField<string>((int)CsvColumnMapping.Volume).ToDouble(),
+            volume,
             GetDate(csv.GetField<string>((int)CsvColumnMapping.Date)));
 
         UpdateDecimalCount(newElement.Close);

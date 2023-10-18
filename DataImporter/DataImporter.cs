@@ -1,4 +1,3 @@
-using DataImporter.Classes;
 using DataImporter.Importers.InvestingDotCom;
 using DataImporter.Importers.Metatrader;
 using DataImporter.Models;
@@ -15,5 +14,5 @@ public class DataImporter
         _ => throw new NotImplementedException()
     };
     
-    public bool IgnoreVolume { get; init; }
+    public VolumeBehavior IgnoreVolume { get; init; }
 }
