@@ -142,11 +142,8 @@ public class InvestingDotComImporter: InvestingDotDomBase
             .QuerySelectorAll("meta")
             .FirstOrDefault(m => m.Attributes.Any(x => x.Value == "og:locale"));
 
-        if (locale is not IHtmlMetaElement meta)
-        {
-            return CultureInfo.GetCultureInfo(DefaultLocale);
-        }
-
-        return CultureInfo.GetCultureInfo(meta.Content ?? DefaultLocale);
+        return locale is not IHtmlMetaElement meta 
+            ? CultureInfo.GetCultureInfo(DefaultLocale) 
+            : CultureInfo.GetCultureInfo(meta.Content ?? DefaultLocale);
     }
 }

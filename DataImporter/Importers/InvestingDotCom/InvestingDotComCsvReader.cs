@@ -8,11 +8,12 @@ namespace DataImporter.Importers.InvestingDotCom;
 
 public class InvestingDotComCsvReader : InvestingDotDomBase
 {
+    private const string DefaultLocale = "en_US";
+    
     private readonly IReaderConfiguration _defaultConfiguration = new CsvConfiguration(CultureInfo.InvariantCulture)
     {
         Delimiter = ","
     };
-
     
     public InvestingDotComCsvReader(bool ignoreVolume) : base(ignoreVolume)
     {
@@ -85,7 +86,10 @@ public class InvestingDotComCsvReader : InvestingDotDomBase
 
     private CsvSource GetSource(object sourceInfo) => sourceInfo switch
     {
-        string filePath => new CsvSource(filePath),
+        string filePath => new CsvSource(filePath)
+        {
+            ReaderConfiguration = new CsvConfiguration(new CultureInfo(DefaultLocale))
+        },
         CsvSource csvSource => csvSource,
         _ => throw new ArgumentException(
             $"Expected type {typeof(string)} or {typeof(CsvSource)} for {nameof(sourceInfo)}")
