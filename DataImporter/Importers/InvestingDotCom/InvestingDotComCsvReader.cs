@@ -23,7 +23,10 @@ public class InvestingDotComCsvReader : InvestingDotDomBase
     {
         var source = GetSource(sourceInfo);
 
-        GetSymbol(source.FilePath);
+        if (source.FilePath is null)
+            throw new ArgumentNullException(nameof(source.FilePath));
+
+        TryGetSymbol(source.FilePath);
         using var reader = new StreamReader(source.FilePath);
         using var csv = new CsvReader(reader, source.ReaderConfiguration ?? _defaultConfiguration);
 
@@ -37,15 +40,22 @@ public class InvestingDotComCsvReader : InvestingDotDomBase
 
         _data = _data.OrderBy(m => m.Date).ToList();
 
-        IsInitialized = true;
+        _isInitialized = true;
     }
 
     public override async Task ImportAsync(object sourceInfo)
     {
         var source = GetSource(sourceInfo);
 
-        GetSymbol(source.FilePath);
-        using var reader = new StreamReader(source.FilePath);
+        if (source.StreamSource is null && source.FilePath is null)
+            throw new ArgumentNullException($"{nameof(source.FilePath)} and {nameof(source.StreamSource)} are null");
+        
+        TryGetSymbol(source.FilePath);
+
+        using var reader = source.StreamSource is null
+            ? new StreamReader(source.FilePath)
+            : new StreamReader(source.StreamSource);
+        
         using var csv = new CsvReader(reader, source.ReaderConfiguration ?? _defaultConfiguration);
 
         await csv.ReadAsync();
@@ -58,7 +68,7 @@ public class InvestingDotComCsvReader : InvestingDotDomBase
 
         _data = _data.OrderBy(m => m.Date).ToList();
 
-        IsInitialized = true;
+        _isInitialized = true;
     }
 
     private void ProcessRow(IReaderRow csv)
@@ -84,17 +94,26 @@ public class InvestingDotComCsvReader : InvestingDotDomBase
         _data.Add(newElement);
     }
 
-    private void GetSymbol(string fileName)
+    private void TryGetSymbol(string? fileName)
     {
-        if (!File.Exists(fileName))
-            throw new FileNotFoundException(fileName);
-
-        Symbol = Path.GetFileNameWithoutExtension(fileName);
+        if (fileName is null)
+        {
+            return;
+        }
+        
+        if (File.Exists(fileName))
+        {
+            Symbol = Path.GetFileNameWithoutExtension(fileName);
+        }
     }
 
     private CsvSource GetSource(object sourceInfo) => sourceInfo switch
     {
         string filePath => new CsvSource(filePath)
+        {
+            ReaderConfiguration = new CsvConfiguration(new CultureInfo(DefaultLocale))
+        },
+        Stream stream => new CsvSource(stream)
         {
             ReaderConfiguration = new CsvConfiguration(new CultureInfo(DefaultLocale))
         },

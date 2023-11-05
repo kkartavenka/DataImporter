@@ -2,8 +2,8 @@ using DataImporter.Models;
 
 namespace DataImporter.Tests;
 
-[TestFixture("AMD Historical Data.csv")]
-[TestFixture("NVDA Historical Data.csv")]
+[TestFixture("TestData/AMD Historical Data.csv")]
+[TestFixture("TestData/NVDA Historical Data.csv")]
 public class Tests
 {
     private readonly string _sourceFile;

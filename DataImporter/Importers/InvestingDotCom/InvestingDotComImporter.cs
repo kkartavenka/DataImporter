@@ -78,7 +78,7 @@ public class InvestingDotComImporter: InvestingDotDomBase
         var locale = GetLocale(document);
         Symbol = GetName(document);
         GetDataTable(document, locale);
-        IsInitialized = true;
+        _isInitialized = true;
     }
 
     private string? GetName(IDocument? document)

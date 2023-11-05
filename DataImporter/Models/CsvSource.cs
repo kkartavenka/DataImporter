@@ -14,7 +14,13 @@ public class CsvSource
     {
         FilePath = filePath;
     }
+    
+    public CsvSource(Stream stream)
+    {
+        StreamSource = stream;
+    }
 
-    public required string FilePath { get; init; }
+    public string? FilePath { get; }
+    public Stream? StreamSource { get; init; }
     public IReaderConfiguration? ReaderConfiguration { get; init; }
 }
