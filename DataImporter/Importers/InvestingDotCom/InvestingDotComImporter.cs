@@ -104,6 +104,7 @@ public class InvestingDotComImporter: InvestingDotDomBase
             throw new ArgumentNullException($"{nameof(table)} is null. Probably issues with parsing");
         }
         
+        _data = new List<Ohlc>(table.Count);
         foreach (var row in table)
         {
             var columns = row.QuerySelectorAll("td").ToList();

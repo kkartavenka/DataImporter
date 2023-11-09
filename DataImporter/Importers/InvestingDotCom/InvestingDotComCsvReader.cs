@@ -61,6 +61,7 @@ public class InvestingDotComCsvReader : InvestingDotDomBase
         await csv.ReadAsync();
         csv.ReadHeader();
 
+        _data = new List<Ohlc>();
         while (await csv.ReadAsync())
         {
             ProcessRow(csv);
